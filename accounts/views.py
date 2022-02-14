@@ -11,13 +11,12 @@ from accounts.filters import ClientFilter
 class UploadFileView(generics.CreateAPIView):
     serializer_class = FileUploadSerializer
 
-
     def post(self, request, *args, **kwargs):
         chunksize = 10 ** 3
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         file = serializer.validated_data['file']
-        my_list = []
+        clients_list = []
         for chunk in pd.read_csv(file, chunksize=chunksize):
             df = chunk.reset_index()
             for index, row in df.iterrows():
@@ -26,11 +25,11 @@ class UploadFileView(generics.CreateAPIView):
                             created_at = row['created_at'],
                             updated_at = row['updated_at']
                 )
-                my_list.append(new_file)
-                if len(my_list) > 20000:
-                     models.Client.objects.bulk_create(my_list)
-                     my_list = []
-        models.Client.objects.bulk_create(my_list)
+                clients_list.append(new_file)
+                if len(clients_list) > 20000:
+                     models.Client.objects.bulk_create(clients_list)
+                     clients_list = []
+        models.Client.objects.bulk_create(clients_list)
         return Response({"status": "success"},
                         status.HTTP_201_CREATED)
 

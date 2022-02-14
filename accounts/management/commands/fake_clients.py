@@ -6,11 +6,11 @@ import datetime
 import random
 from faker.providers import DynamicProvider
 from datetime import timedelta
-import pytz
+
 
 
 class Command(BaseCommand):
-    help = 'generate fake clients'
+    help = 'generate 500000 fake clients'
 
     def handle(self, *args, **kwargs):
 
